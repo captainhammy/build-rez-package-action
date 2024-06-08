@@ -28,7 +28,7 @@ jobs:
         run: rez env test_install_package -- echo "resolve successful"
 
       # Install some packages that we can use to test building variants based on them.
-      - name: Install Variant Test Packages
+      - name: Install variant packages
         uses: captainhammy/install-rez-packages-action@v1
         with:
           packages: "six==1.14.0,six==1.15.0"
