@@ -8,27 +8,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        houdini-version:
-#          - "19.5"  # Python 3.9
-          - "20.0"  # Python 3.10
-
     container:
-      image: captainhammy/hython-runner:${{ matrix.houdini-version }}
+      image: captainhammy/hython-runner:20.0
 
     steps:
-      -
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      # Unit Tests
-
-#      - name: Install unit test dependencies
-#        run: python -m pip install tox tox-gh-actions
-#
-#      - name: Test with tox
-#        run: tox
 
       # Integration tests
 

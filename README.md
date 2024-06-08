@@ -1,4 +1,4 @@
-[![Tests](https://github.com/captainhammy/build-rez-packages-action/actions/workflows/tests.yml/badge.svg)](https://github.com/captainhammy/build-rez-packages-action/actions/workflows/tests.yml)
+[![Tests](https://github.com/captainhammy/build-rez-package-action/actions/workflows/tests.yml/badge.svg)](https://github.com/captainhammy/build-rez-package-action/actions/workflows/tests.yml)
 
 # Build Rez Packages
 
