@@ -5,7 +5,7 @@ on:
   - workflow_dispatch
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     container:
@@ -15,38 +15,43 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Integration tests
-
+      # Test building a simple package with no variants.
       - name: Build test package
         uses: ./
         with:
           package_root: ./tests/test_install_package
           extra: -- --debug-output
 
+      # Verify the package was built by resolving it and running a command.
       - name: Test resolve
         shell: bash
         run: rez env test_install_package -- echo "resolve successful"
 
+      # Install some packages that we can use to test building variants based on them.
       - name: Install Variant Test Packages
         uses: captainhammy/install-rez-packages-action@v1
         with:
           packages: "six==1.14.0,six==1.15.0"
 
-      - name: Build test package variant 0
+      # Explicitly build the 0 variant.
+      - name: Build test package (variant 0)
         uses: ./
         with:
           variant: 0
           package_root: ./tests/test_install_package_with_variants
 
-      - name: Test resolve variant 0
+      # Verify the correct variant was built by resolving it via its dependency version.
+      - name: Test resolve (variant 0)
         shell: bash
         run: rez env test_install_package_with_variants six-1.14.0 -- echo "resolve successful"
 
-      - name: Build test package all variants
+      # Build the package without specifying a variant. This will build all the variants.
+      - name: Build test package (all variants)
         uses: ./
         with:
           package_root: ./tests/test_install_package_with_variants
 
-      - name: Test resolve variant 1
+      # Verify that variant 1 was built by resolving it via its dependency version.
+      - name: Test resolve (variant 1)
         shell: bash
         run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"
