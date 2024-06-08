@@ -24,6 +24,7 @@ jobs:
           extra: -- --debug-output
 
       - name: Test resolve
+        shell: bash
         run: rez env test_install_package -- echo "resolve successful"
 
       - name: Install Variant Test Packages
@@ -38,6 +39,7 @@ jobs:
           package_root: ./tests/test_install_package_with_variants
 
       - name: Test resolve variant 0
+        shell: bash
         run: rez env test_install_package_with_variants six-1.14.0 -- echo "resolve successful"
 
       - name: Build test package all variants
@@ -46,4 +48,5 @@ jobs:
           package_root: ./tests/test_install_package_with_variants
 
       - name: Test resolve variant 1
+        shell: bash
         run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"

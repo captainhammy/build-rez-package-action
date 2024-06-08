@@ -24,6 +24,7 @@ runs:
 
   steps:
     - name: Build Package
+      shell: bash
       run: |
         cd ${{ inputs.package_root }}
         rez-build --install ${{ inputs.variant != '' && format('--variant {0}', inputs.variant) || '' }} ${{ inputs.extra != '' && format('{0}', inputs.extra) || '' }}
