@@ -1,0 +1,64 @@
+name: Tests
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        houdini-version:
+#          - "19.5"  # Python 3.9
+          - "20.0"  # Python 3.10
+
+    container:
+      image: captainhammy/hython-runner:${{ matrix.houdini-version }}
+
+    steps:
+      -
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Unit Tests
+
+#      - name: Install unit test dependencies
+#        run: python -m pip install tox tox-gh-actions
+#
+#      - name: Test with tox
+#        run: tox
+
+      # Integration tests
+
+      - name: Build test package
+        uses: ./
+        with:
+          package_root: ./tests/test_install_package
+          extra: -- --debug-output
+
+      - name: Test resolve
+        run: rez env test_install_package -- echo "resolve successful"
+
+      - name: Install Variant Test Packages
+        uses: captainhammy/install-rez-packages-action@v1
+        with:
+          packages: "six==1.14.0,six==1.15.0"
+
+      - name: Build test package variant 0
+        uses: ./
+        with:
+          variant: 0
+          package_root: ./tests/test_install_package_with_variants
+
+      - name: Test resolve variant 0
+        run: rez env test_install_package_with_variants six-1.14.0 -- echo "resolve successful"
+
+      - name: Build test package all variants
+        uses: ./
+        with:
+          package_root: ./tests/test_install_package_with_variants
+
+      - name: Test resolve variant 1
+        run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"

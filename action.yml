@@ -1,0 +1,29 @@
+name: "Build Rez Package"
+description: "Build and install a Rez package locally."
+branding:
+  icon: "arrow-up-right"
+  color: "orange"
+inputs:
+  variant:
+    description: Optional variant number to build
+    default: ''
+    required: false
+
+  extra:
+    description: Optional extra args to pass to build command.
+    default: ''
+    required: false
+
+  package_root:
+    description: The package root directory (containing the package.py)
+    default: '.'
+    required: false
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Build Package
+      run: |
+        cd ${{ inputs.package_root }}
+        rez-build --install ${{ inputs.variant != '' && format('--variant {0}', inputs.variant) || '' }} ${{ inputs.extra != '' && format('{0}', inputs.extra) || '' }}
