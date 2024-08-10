@@ -45,7 +45,7 @@ runs:
       shell: bash
       run: |
         cd ${{ inputs.package_root }}
-        rez python ${GITHUB_ACTION_PATH}/determine_variant.py ${{ inputs.variant }} ${{ inputs.variant_from_request }}
+        rez python ${GITHUB_ACTION_PATH}/determine_variant.py ${{ inputs.variant || '""' }} ${{ inputs.variant_from_request || '""'}}
 
     - name: Build Package
       shell: bash

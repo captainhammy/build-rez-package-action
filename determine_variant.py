@@ -46,6 +46,9 @@ def requests_match(request1: PackageRequest, request2: PackageRequest) -> bool:
 
 
 def find_matching_variant(request_str: str) -> int:
+    if not request_str:
+        return -1
+
     request = PackageRequest(request_str)
 
     # package = get_package(pathlib.Path.cwd())
