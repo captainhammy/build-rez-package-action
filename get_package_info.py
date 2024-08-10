@@ -56,6 +56,7 @@ def main():
     args = parser.parse_args()
     variant = args.variant
 
+    print(pathlib.Path.cwd())
     package = get_package(pathlib.Path.cwd())
 
     package_variant = variant if variant is not None else "''"
