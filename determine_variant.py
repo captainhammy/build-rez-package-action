@@ -1,21 +1,24 @@
+"""Program to determine which variant, if any, to build."""
 
+# Future
 from __future__ import annotations
 
+# Standard Library
 import argparse
-import pathlib
 import os
-from typing import TYPE_CHECKING
+import pathlib
 
+# Third Party
 import rez.packages
 from rez.utils.formatting import PackageRequest
 
-if TYPE_CHECKING:
-    from rez.developer_package import DeveloperPackage
-
-import rez
-
 
 def build_parser() -> argparse.ArgumentParser:
+    """Build the program's argument parser.
+
+    Returns:
+        The argument parser.
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument("variant")
@@ -24,59 +27,65 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def get_package(package_root: pathlib.Path) -> DeveloperPackage:
-    """Get the package from the local package.py folder.
+def find_matching_variant(request_str: str) -> int:
+    """Find a variant matching the given request.
+
+    This function returns the index of the variant.
+
+    A return value of
 
     Args:
-        package_root: The package directory.
+        request_str: A package request string.
 
     Returns:
-        The package.
-    """
-    package = rez.packages.get_developer_package(package_root.as_posix())
+        The index of the variant, if it exists.
 
-    return package
+    Raises:
+        RuntimeError: If more than one variant matches the request.
+    """
+    request = PackageRequest(request_str)
+    package = rez.packages.get_developer_package(pathlib.Path.cwd().as_posix())
+
+    matching_indices = []
+
+    for variant in package.iter_variants():
+        matching_indices.extend([variant.index for requires in variant.requires if requests_match(requires, request)])
+
+    if not matching_indices:
+        raise RuntimeError("No matching variants match the request")  # noqa: TRY003
+
+    if len(matching_indices) > 1:
+        raise RuntimeError("More than one variant matches the request")  # noqa: TRY003
+
+    return matching_indices[-1]
 
 
 def requests_match(request1: PackageRequest, request2: PackageRequest) -> bool:
+    """Check if two package requests match.
+
+    Args:
+        request1: A package request.
+        request2: A package request.
+
+    Returns:
+        Whether two package requests match.
+    """
     if request1.name != request2.name:
         return False
 
     return request1.range.intersects(request2.range)
 
 
-def find_matching_variant(request_str: str) -> int:
-    if not request_str:
-        return -1
-
-    request = PackageRequest(request_str)
-    package = get_package(pathlib.Path.cwd())
-
-    # package = get_package(pathlib.Path("/home/graham/src/houdini-toolbox-inlinecpp"))
-
-    matching_indices = []
-
-    for variant in package.iter_variants():
-        for requires in variant.requires:
-            if requests_match(requires, request):
-                matching_indices.append(variant.index)
-
-    if not matching_indices:
-        return -1
-
-    if len(matching_indices) > 1:
-        raise RuntimeError("Too many options")
-
-    return matching_indices[-1]
-
-
-def write_result(package_variant: int) -> None:
+def write_result(package_variant: int | None) -> None:
     """Write the package name to the outputs file.
 
     Args:
         package_variant: The package variant.
     """
-    has_variant = 1 if package_variant != -1 else 0
+    has_variant = 1 if package_variant is not None else 0
+
+    if package_variant is None:
+        package_variant = -1
 
     output_path = pathlib.Path(os.environ["GITHUB_OUTPUT"])
 
@@ -85,13 +94,17 @@ def write_result(package_variant: int) -> None:
         fp.write(f"variant_index={package_variant}\n")
 
 
-def main():
+def main() -> None:
+    """The program."""
     parser = build_parser()
     args = parser.parse_args()
     variant = args.variant
     request = args.request
 
-    variant_idx = int(variant) if variant != '' else find_matching_variant(request)
+    # If the variant value is not an empty string, use the integer value of it.
+    # Otherwise, if the request value is empty, use None. If the value is set, try and
+    # find a matching variant.
+    variant_idx = int(variant) if variant else None if not request else find_matching_variant(request)
 
     write_result(variant_idx)
 

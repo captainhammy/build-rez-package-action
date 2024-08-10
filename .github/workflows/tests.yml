@@ -15,6 +15,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # Unit Tests
+
+      - name: Install unit test dependencies
+        run: python -m pip install tox tox-gh-actions
+
+      - name: Test with tox
+        run: tox
+
+      # Integration tests
+
       # Test building a simple package with no variants.
       - name: Build test package
         id: build-test-package
@@ -28,7 +38,7 @@ jobs:
         shell: bash
         run: rez env test_install_package -- echo "resolve successful"
 
-      - name: Validate action output information
+      - name: Validate build action output information
         shell: bash
         run: |
           test ${{ steps.build-test-package.outputs.package_name }} = test_install_package
@@ -54,7 +64,7 @@ jobs:
         shell: bash
         run: rez env test_install_package_with_variants six-1.14.0 -- echo "resolve successful"
 
-      - name: Validate variant action output information
+      - name: Validate variant build action output information
         shell: bash
         run: |
           test ${{ steps.build-variant-0.outputs.package_name }} = test_install_package_with_variants
@@ -91,7 +101,7 @@ jobs:
         shell: bash
         run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"
 
-      - name: Validate action output information
+      - name: Validate variant build action output information
         shell: bash
         run: |
           test ${{ steps.build-by-request.outputs.package_name }} = test_install_package_with_variants
@@ -107,4 +117,30 @@ jobs:
 
       - name: Validate previous step failure
         if: steps.variant-0-not-built.outcome != 'failure'
+        run: exit 1
+
+      # Test with a request that does not match any variants.
+      - name: Build test package variant by request
+        id: no-matching-variants
+        continue-on-error: true
+        uses: ./
+        with:
+          package_root: ./tests/test_install_package_with_variants
+          variant_from_request: foo-123
+
+      - name: Validate previous step failure
+        if: steps.no-matching-variants.outcome != 'failure'
+        run: exit 1
+
+      # Test with a request that matches too many variants.
+      - name: Build test package variant by request
+        id: too-many-matching-variants
+        continue-on-error: true
+        uses: ./
+        with:
+          package_root: ./tests/test_install_package_with_variants
+          variant_from_request: six
+
+      - name: Validate previous step failure
+        if: steps.too-many-matching-variants.outcome != 'failure'
         run: exit 1

@@ -1,32 +1,23 @@
+"""Program to write package info to the action output."""
 
+# Future
 from __future__ import annotations
 
+# Standard Library
 import argparse
-import pathlib
 import os
-from typing import TYPE_CHECKING
+import pathlib
 
+# Third Party
 import rez.packages
-
-if TYPE_CHECKING:
-    from rez.developer_package import DeveloperPackage
-
-
-def get_package(package_root: pathlib.Path) -> DeveloperPackage:
-    """Get the package from the local package.py folder.
-
-    Args:
-        package_root: The package directory.
-
-    Returns:
-        The package.
-    """
-    package = rez.packages.get_developer_package(package_root.as_posix())
-
-    return package
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Build the program's argument parser.
+
+    Returns:
+        The argument parser.
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--variant", default=None)
@@ -50,20 +41,18 @@ def write_result(package_name: str, package_version: str, package_variant: str) 
         fp.write(f"package_variant={package_variant}\n")
 
 
-def main():
-
+def main() -> None:
+    """The program."""
     parser = build_parser()
     args = parser.parse_args()
     variant = args.variant
 
-    print(pathlib.Path.cwd())
-    package = get_package(pathlib.Path.cwd())
+    package = rez.packages.get_developer_package(pathlib.Path.cwd().as_posix())
 
     package_variant = variant if variant is not None else "''"
 
-    write_result(package.name, package.version, package_variant)
+    write_result(package.name, str(package.version), package_variant)
 
 
 if __name__ == "__main__":
     main()
-
