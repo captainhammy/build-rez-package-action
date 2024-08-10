@@ -1,0 +1,118 @@
+
+[tool.pytest.ini_options]
+    pythonpath = "."
+    addopts = "--cov --cov-report=html --cov-report=xml --cov-fail-under=100 --color=yes"
+
+[tool.isort]
+    profile = "black"
+    src_paths = ["."]
+    sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+    import_heading_future = "Future"
+    import_heading_stdlib = "Standard Library"
+    import_heading_thirdparty = "Third Party"
+    import_heading_firstparty = "build-rez-packages-action"
+    dedup_headings = true
+    indented_import_headings = false
+
+[tool.mypy]
+    disallow_incomplete_defs = true
+    disallow_untyped_calls = true
+    disallow_untyped_defs = true
+    files = ["determine_variant.py", "get_package_info.py"]
+    ignore_missing_imports = true
+
+
+[tool.coverage]
+
+    [tool.coverage.run]
+        branch = true
+        source =  ["determine_variant", "get_package_info"]
+        omit = [
+            "*version.py",
+        ]
+        disable_warnings = [
+            "module-not-imported",
+            "module-not-measured",
+        ]
+
+    [tool.coverage.report]
+        exclude_lines = [
+            # Have to re-enable the standard pragma
+            "pragma: no cover",
+
+            # Don't complain about missing debug-only code:
+            "def __repr__",
+            "if self.debug",
+            "if TYPE_CHECKING",
+
+            # Don't complain if tests don't hit defensive assertion code:
+            "raise AssertionError",
+            "raise NotImplementedError",
+
+            # Don't complain if non-runnable code isn't run:
+            "if 0:",
+            "if __name__ == .__main__.:",
+        ]
+        ignore_errors = true
+        skip_empty = true
+
+    [tool.coverage.html]
+        directory = "coverage_html_report"
+
+[tool.pydocstringformatter]
+    max-summary-lines = 2
+    max-line-length = 120
+
+[tool.ruff]
+    line-length = 120
+
+    [tool.ruff.lint]
+        extend-select = [
+            "E",  # pycodestyle
+            "W",  # pycodestyle
+            "UP", # pyupgrade
+            "D",  # pydocstyle
+            "F",  # Pyflakes
+            "PL",  # Pylint
+            "RSE",  # flake8-raise
+            "B",  # flake8-bugbear
+            "PT",  #  flake8-pytest-style
+            "C90",  #  mccabe
+            "TRY",  #  tryceratops
+            "FLY",  #  flynt
+            "PERF",  #  Perflint
+            "LOG",  #  flake8-logging
+            "BLE",  # flake8-blind-except
+            "A",  # flake8-builtins
+            "C4",  # flake8-comprehensions
+            "RET",  # flake8-return
+            "SIM",  # flake8-simplify
+            "TCH",  # flake8-type-checking
+            "PTH",  # flake8-use-pathlib
+            "RUF",  # Ruff specific
+            "FBT",  # flake8-boolean-trap
+            "FURB",  # refurb
+            "PYI",  # flake8-pyi
+        ]
+        ignore = [
+            "D104",  # Missing docstring in public module
+            "D105",  # Missing docstring in magic method
+            "D107",  # Missing docstring in __init__
+            "PT004",  # Fixtures not returning anything not starting with _
+        ]
+
+    [tool.ruff.lint.per-file-ignores]
+        "tests/*.py" = [
+            "PLR0913",  # Too many args for function
+            "PLR0917",  # Too many positional args
+            "PLR6301",  # 'no-self-use' for tests
+            "PT006",  # Wrong type pased as parametrize arg
+            "PT007",  # Expected list instead of tuple
+            "PT008",  # Use return_value instead of lambda
+        ]
+
+    [tool.ruff.lint.flake8-pytest-style]
+        fixture-parentheses = false  # Match actual pytest recommendation with no parentheses
+
+    [tool.ruff.lint.pydocstyle]
+        convention = "google"

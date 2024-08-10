@@ -26,7 +26,7 @@ jobs:
       # Integration tests
 
       # Test building a simple package with no variants.
-      - name: Build test package
+      - name: Build test package with no variants
         id: build-test-package
         uses: ./
         with:
@@ -34,7 +34,7 @@ jobs:
           extra: -- --debug-output
 
       # Verify the package was built by resolving it and running a command.
-      - name: Test resolve
+      - name: Test package build success
         shell: bash
         run: rez env test_install_package -- echo "resolve successful"
 
@@ -52,7 +52,7 @@ jobs:
           packages: "six==1.14.0,six==1.15.0"
 
       # Explicitly build the 0 variant.
-      - name: Build test package (variant 0)
+      - name: Build test package with variant 0
         id: build-variant-0
         uses: ./
         with:
@@ -120,7 +120,7 @@ jobs:
         run: exit 1
 
       # Test with a request that does not match any variants.
-      - name: Build test package variant by request
+      - name: Build test package variant by request with no matching variants
         id: no-matching-variants
         continue-on-error: true
         uses: ./
@@ -133,7 +133,7 @@ jobs:
         run: exit 1
 
       # Test with a request that matches too many variants.
-      - name: Build test package variant by request
+      - name: Build test package variant by request with too many matching variants
         id: too-many-matching-variants
         continue-on-error: true
         uses: ./
