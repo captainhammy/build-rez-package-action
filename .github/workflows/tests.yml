@@ -80,22 +80,23 @@ jobs:
 
       # Test building variant 1 by using a request
       - name: Build test package variant by request
+        id: build-by-request
         uses: ./
         with:
           package_root: ./tests/test_install_package_with_variants
           variant_from_request: six-1.15
 
       # Verify that variant 1 was built
-      - name: Test resolve (variant 1)
+      - name: Test resolve by request (variant 1)
         shell: bash
         run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"
 
       - name: Validate action output information
         shell: bash
         run: |
-          test ${{ steps.build-variant-0.outputs.package_name }} = test_install_package_with_variants
-          test ${{ steps.build-variant-0.outputs.package_version }} = 0.0.1
-          test ${{ steps.build-variant-0.outputs.package_variant }} = 1
+          test ${{ steps.build-by-request.outputs.package_name }} = test_install_package_with_variants
+          test ${{ steps.build-by-request.outputs.package_version }} = 0.0.1
+          test ${{ steps.build-by-request.outputs.package_variant }} = 1
 
       # Verify the variant 0 was not built.
       - name: Test resolve (variant 0)
