@@ -1,0 +1,26 @@
+name: Move Major Release Tag
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  movetag:
+    runs-on: ubuntu-latest
+
+    # We need write permissions in order to update tags.
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Get major version num and update tag
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        MAJOR=${VERSION%%.*}
+        git config --global user.name 'Graham Thompson'
+        git config --global user.email 'captainhammy@gmail.com'
+        git tag -fa ${MAJOR} -m "Update major version tag"
+        git push origin ${MAJOR} --force
