@@ -32,8 +32,8 @@ jobs:
         shell: bash
         run: |
           test ${{ steps.build-test-package.outputs.package_name }} = "test_install_package"
-          test ${{ steps.build-test-package.outputs.version }} = "0.0.2"
-          test ${{ steps.build-test-package.outputs.variant }} = ""
+          test ${{ steps.build-test-package.outputs.package_version }} = "0.0.2"
+          test ${{ steps.build-test-package.outputs.package_variant }} = ""
 
       # Install some packages that we can use to test building variants based on them.
       - name: Install variant packages
@@ -58,8 +58,8 @@ jobs:
         shell: bash
         run: |
           test ${{ steps.build-variant-0.outputs.package_name }} = "test_install_package_with_variants"
-          test ${{ steps.build-variant-0.outputs.version }} = "0.0.1"
-          test ${{ steps.build-variant-0.outputs.variant }} = "1"
+          test ${{ steps.build-variant-0.outputs.package_version }} = "0.0.1"
+          test ${{ steps.build-variant-0.outputs.package_variant }} = "1"
 
       # Build the package without specifying a variant. This will build all the variants.
       - name: Build test package (all variants)
