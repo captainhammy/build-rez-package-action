@@ -46,12 +46,13 @@ def requests_match(request1: PackageRequest, request2: PackageRequest) -> bool:
 
 
 def find_matching_variant(request_str: str) -> int:
+    raise RuntimeError(pathlib.Path.cwd())
+
     if not request_str:
         return -1
 
     request = PackageRequest(request_str)
 
-    raise RuntimeError(pathlib.Path.cwd())
     package = get_package(pathlib.Path.cwd())
     # package = get_package(pathlib.Path("/home/graham/src/houdini-toolbox-inlinecpp"))
 
