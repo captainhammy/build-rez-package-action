@@ -51,7 +51,7 @@ def find_matching_variant(request_str: str) -> int:
 
     request = PackageRequest(request_str)
 
-    print(pathlib.Path.cwd())
+    raise RuntimeError(pathlib.Path.cwd())
     package = get_package(pathlib.Path.cwd())
     # package = get_package(pathlib.Path("/home/graham/src/houdini-toolbox-inlinecpp"))
 
