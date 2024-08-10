@@ -41,7 +41,7 @@ def find_matching_variant(request_str: str) -> int:
         The index of the variant, if it exists.
 
     Raises:
-        RuntimeError: If more than one variant matches the request.
+        RuntimeError: If there are no match, or more than one variant matches the request.
     """
     request = PackageRequest(request_str)
     package = rez.packages.get_developer_package(pathlib.Path.cwd().as_posix())
