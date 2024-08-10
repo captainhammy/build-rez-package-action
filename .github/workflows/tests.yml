@@ -65,7 +65,7 @@ jobs:
       - name: Build test package variant by request
         uses: ./
         with:
-          package_root: ./tests/test_install_package_with_variant
+          package_root: ./tests/test_install_package_with_variants
           variant_from_request: six-1.15
 
       # Verify that variant 1 was built
