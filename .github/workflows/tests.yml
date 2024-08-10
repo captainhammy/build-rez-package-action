@@ -59,7 +59,7 @@ jobs:
       - name: Remove built test packages
         shell: bash
         run: |
-          rez rm --package test_install_package_with_variants==0.0.1 `rez config local_packages_path`
+          rez rm --package test_install_package_with_variants==0.0.1 $REZ_LOCAL_PACKAGES_PATH
 
       # Test building the variant by a request
       - name: Build test package (all variants)
