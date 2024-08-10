@@ -17,6 +17,7 @@ jobs:
 
       # Test building a simple package with no variants.
       - name: Build test package
+        id: build-test-package
         uses: ./
         with:
           package_root: ./tests/test_install_package
@@ -27,6 +28,13 @@ jobs:
         shell: bash
         run: rez env test_install_package -- echo "resolve successful"
 
+      - name: Validate action output information
+        shell: bash
+        run: |
+          test ${{ steps.build-test-package.outputs.package_name }} = "test_install_package"
+          test ${{ steps.build-test-package.outputs.version }} = "0.0.2"
+          test ${{ steps.build-test-package.outputs.variant }} = ""
+
       # Install some packages that we can use to test building variants based on them.
       - name: Install variant packages
         uses: captainhammy/install-rez-packages-action@v1
@@ -35,6 +43,7 @@ jobs:
 
       # Explicitly build the 0 variant.
       - name: Build test package (variant 0)
+        id: build-variant-0
         uses: ./
         with:
           variant: 0
@@ -44,6 +53,13 @@ jobs:
       - name: Test resolve (variant 0)
         shell: bash
         run: rez env test_install_package_with_variants six-1.14.0 -- echo "resolve successful"
+
+      - name: Validate action output information
+        shell: bash
+        run: |
+          test ${{ steps.build-variant-0.outputs.package_name }} = "test_install_package_with_variants"
+          test ${{ steps.build-variant-0.outputs.version }} = "0.0.1"
+          test ${{ steps.build-variant-0.outputs.variant }} = "1"
 
       # Build the package without specifying a variant. This will build all the variants.
       - name: Build test package (all variants)
@@ -56,12 +72,13 @@ jobs:
         shell: bash
         run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"
 
+      # Remove the built packages so we can test build again
       - name: Remove built test packages
         shell: bash
         run: |
           rez rm --package test_install_package_with_variants-0.0.1 `rez config local_packages_path`
 
-      # Test building the variant by a request
+      # Test building variant 1 by using a request
       - name: Build test package variant by request
         uses: ./
         with:
@@ -73,7 +90,7 @@ jobs:
         shell: bash
         run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"
 
-      # Verify the correct variant was built by resolving it via its dependency version.
+      # Verify the variant 0 was not built.
       - name: Test resolve (variant 0)
         id: variant-0-not-built
         continue-on-error: true
