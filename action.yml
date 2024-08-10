@@ -58,4 +58,4 @@ runs:
       shell: bash
       run: |
         cd ${{ inputs.package_root }}
-        rez python ${GITHUB_ACTION_PATH}/determine_package_name.py ${{ steps.determine-variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine-variant.outputs.variant_index) || '' }}
+        rez python ${GITHUB_ACTION_PATH}/get_package_info.py ${{ steps.determine-variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine-variant.outputs.variant_index) || '' }}
