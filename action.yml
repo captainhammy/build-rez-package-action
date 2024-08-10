@@ -9,6 +9,11 @@ inputs:
     default: ''
     required: false
 
+  variant_from_request:
+    description: Optional package request to determine variant
+    default: ''
+    required: false
+
   extra:
     description: Optional extra args to pass to build command.
     default: ''
@@ -19,12 +24,38 @@ inputs:
     default: '.'
     required: false
 
+outputs:
+  package_name:
+    description: The name of the built package.
+    value: ${{ steps.set_outputs.outputs.package_name }}
+  package_version:
+    description: The version of the built package.
+    value: ${{ steps.set_outputs.outputs.package_version }}
+  package_variant:
+    description: The variant number, if any, of the built package.
+    value: ${{ steps.set_outputs.outputs.package_variant }}
+
 runs:
+
   using: "composite"
 
   steps:
+    - id: determine-variant
+      name: Determine variant
+      shell: bash
+      run: |
+        cd ${{ inputs.package_root }}
+        rez python ${GITHUB_ACTION_PATH}/determine_variant.py ${{ inputs.variant }} ${{ inputs.variant_from_request }}
+
     - name: Build Package
       shell: bash
       run: |
         cd ${{ inputs.package_root }}
-        rez-build --install ${{ inputs.variant != '' && format('--variant {0}', inputs.variant) || '' }} ${{ inputs.extra != '' && format('{0}', inputs.extra) || '' }}
+        rez build --install ${{ steps.determine-variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine-variant.outputs.variant_index) || '' }} ${{ inputs.extra != '' && format('{0}', inputs.extra) || '' }}
+
+    - name: Set Outputs
+      id: set_outputs
+      shell: bash
+      run: |
+        cd ${{ inputs.package_root }}
+        rez python ${GITHUB_ACTION_PATH}/determine_package_name.py ${{ steps.determine-variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine-variant.outputs.variant_index) || '' }}

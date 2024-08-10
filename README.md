@@ -1,6 +1,6 @@
 [![Tests](https://github.com/captainhammy/build-rez-package-action/actions/workflows/tests.yml/badge.svg)](https://github.com/captainhammy/build-rez-package-action/actions/workflows/tests.yml)
 
-# Build Rez Packages
+# Build Rez Package
 
 This GitHub Action will build and install a [rez](https://github.com/AcademySoftwareFoundation/rez) package via the `rez build` command.
 

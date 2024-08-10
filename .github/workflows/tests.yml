@@ -55,3 +55,31 @@ jobs:
       - name: Test resolve (variant 1)
         shell: bash
         run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"
+
+      - name: Remove built test packages
+        shell: bash
+        run: |
+          rez rm --package test_install_package_with_variants==0.0.1 `rez config local_packages_path`
+
+      # Test building the variant by a request
+      - name: Build test package (all variants)
+        uses: ./
+        with:
+          package_root: ./tests/test_install_package_with_variant
+          variant-from-requests: six-1.15
+
+      # Verify that variant 1 was built
+      - name: Test resolve (variant 1)
+        shell: bash
+        run: rez env test_install_package_with_variants six-1.15.0 -- echo "resolve successful"
+
+      # Verify the correct variant was built by resolving it via its dependency version.
+      - name: Test resolve (variant 0)
+        id: variant-0-not-built
+        continue-on-error: true
+        shell: bash
+        run: rez env test_install_package_with_variants six-1.14.0 -- echo "resolve successful"
+
+      - name: Validate previous step failure
+        if: steps.variant-0-not-built.outcome != 'failure'
+        run: exit 1
