@@ -23,7 +23,7 @@ def get_package(package_root: pathlib.Path) -> DeveloperPackage:
     """
     package = rez.packages.get_developer_package(package_root.as_posix())
 
-    return package.name
+    return package
 
 
 def build_parser() -> argparse.ArgumentParser:
