@@ -43,6 +43,7 @@ def write_result(package_root: str) -> None:
         print("writing package root", package_root)
         fp.write(f"package_root={package_root}\n")
 
+    raise RuntimeError("Write to",os.environ["GITHUB_OUTPUT"], package_root)
 
 def main() -> None:
     """The program."""
