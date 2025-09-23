@@ -56,7 +56,10 @@ runs:
       name: Get Package Root
       shell: bash
       run: |
+        echo ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
         python ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
+        echo ${{ steps.get_package_root.outputs.package_root }}
+        echo "Outputs were" ${{ steps.get_package_root.outputs.package_root }}
 
     - id: determine_variant
       name: Determine variant
