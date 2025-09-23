@@ -29,6 +29,25 @@ jobs:
 
       # Integration tests
 
+      # Verify a target git package does not exist
+      - name: Test missing houdini_core_tools
+        id: no-package-from-git
+        continue-on-error: true
+        shell: bash
+        run: rez env houdini_core_tools -- echo "resolve successful"
+
+      - name: Build a package from git
+        id: build-from-git
+        uses: ./
+        with:
+          from_git: https://github.com/captainhammy/houdini-core-tools.git
+
+      # Verify a target git package exists
+      - name: Test houdini_core_tools was built from git
+        id: successful-package-from-git
+        shell: bash
+        run: rez env houdini_core_tools -- echo "resolve successful"
+
       # Test building a simple package with no variants.
       - name: Build test package with no variants
         id: build-test-package
@@ -149,21 +168,3 @@ jobs:
         if: steps.too-many-matching-variants.outcome != 'failure'
         run: exit 1
 
-      # Verify a target git package does not exist
-      - name: Test missing houdini_core_tools
-        id: no-package-from-git
-        continue-on-error: true
-        shell: bash
-        run: rez env houdini_core_tools -- echo "resolve successful"
-
-      - name: Build a package from git
-        id: build-from-git
-        uses: ./
-        with:
-          from_git: https://github.com/captainhammy/houdini-core-tools.git
-
-      # Verify a target git package exists
-      - name: Test houdini_core_tools was built from git
-        id: successfull-package-from-git
-        shell: bash
-        run: rez env houdini_core_tools -- echo "resolve successful"

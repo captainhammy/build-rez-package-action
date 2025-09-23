@@ -40,6 +40,7 @@ def write_result(package_root: str) -> None:
     output_path = pathlib.Path(os.environ["GITHUB_OUTPUT"])
 
     with output_path.open("a", encoding="utf-8") as fp:
+        print("writing package root", package_root)
         fp.write(f"package_root={package_root}\n")
 
 
@@ -49,6 +50,8 @@ def main() -> None:
     args = parser.parse_args()
     root_parameter = args.root_parameter
     url = args.from_git
+
+    print("get_package_root", root_parameter, url)
 
     if url:
         parsed_url = urlparse(url)
