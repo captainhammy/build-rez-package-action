@@ -10,10 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        houdini-version:
-          - "19.5"
-          - "20.0"
-          - "20.5"
+        houdini-version: ["20.5", "21.0"]
 
     container:
       image: captainhammy/hython-runner:${{ matrix.houdini-version }}
@@ -151,3 +148,22 @@ jobs:
       - name: Validate previous step failure
         if: steps.too-many-matching-variants.outcome != 'failure'
         run: exit 1
+
+      # Verify a target git package does not exist
+      - name: Test missing houdini_core_tools
+        id: no-package-from-git
+        continue-on-error: true
+        shell: bash
+        run: rez env houdini_core_tools -- echo "resolve successful"
+
+      - name: Build a package from git
+        id: build-from-git
+        uses: ./
+        with:
+          from_git: https://github.com/captainhammy/houdini-core-tools.git
+
+      # Verify a target git package exists
+      - name: Test houdini_core_tools was built from git
+        id: successfull-package-from-git
+        shell: bash
+        run: rez env houdini_core_tools -- echo "resolve successful"
