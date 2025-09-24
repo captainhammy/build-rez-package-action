@@ -59,7 +59,7 @@ runs:
         echo "output is " $GITHUB_OUTPUT
         echo ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
         python ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
-        echo "output is " $GITHUB_OUTPUT
+        echo cat $GITHUB_OUTPUT
 
     - id: determine_variant
       name: Determine variant
