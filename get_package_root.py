@@ -38,9 +38,9 @@ def write_result(package_root: str) -> None:
         package_root: The package variant.
     """
     output_path = pathlib.Path(os.environ["GITHUB_OUTPUT"])
+    print("writing package root", package_root)
 
     with output_path.open("a", encoding="utf-8") as fp:
-        print("writing package root", package_root)
         fp.write(f"package_root={package_root}\n")
 
     raise RuntimeError("Write to",os.environ["GITHUB_OUTPUT"], package_root)
