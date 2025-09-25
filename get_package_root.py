@@ -38,22 +38,17 @@ def write_result(package_root: str) -> None:
         package_root: The package variant.
     """
     output_path = pathlib.Path(os.environ["GITHUB_OUTPUT"])
-    print("writing package root", package_root)
 
     with output_path.open("a", encoding="utf-8") as fp:
         fp.write(f"package_root={package_root}\n")
 
-    raise RuntimeError("Write to",os.environ["GITHUB_OUTPUT"], package_root)
 
 def main() -> None:
     """The program."""
-    print("hihihihii")
     parser = build_parser()
     args = parser.parse_args()
     root_parameter = args.root_parameter
     url = args.from_git
-
-    print("get_package_root", root_parameter, url)
 
     if url:
         parsed_url = urlparse(url)
@@ -66,3 +61,6 @@ def main() -> None:
 
     else:
         write_result(root_parameter)
+
+if __name__ == "__main__":
+    main()
