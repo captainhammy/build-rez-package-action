@@ -56,9 +56,9 @@ runs:
       name: Get Package Root
       shell: bash
       run: |
-        echo ${GITHUB_ACTION_PATH}
-        echo ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
-        python ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
+        echo "my_output=hello_world" >> $GITHUB_OUTPUT
+        cat $GITHUB_OUTPUT
+        python ${GITHUB_ACTION_PATH}/get_package_root.pys ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
         cat $GITHUB_OUTPUT
 
     - id: determine_variant
