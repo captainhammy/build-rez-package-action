@@ -21,8 +21,8 @@ def build_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("root-parameter")
-    parser.add_argument("from-git")
+    parser.add_argument("root_parameter")
+    parser.add_argument("from_git")
 
     return parser
 
