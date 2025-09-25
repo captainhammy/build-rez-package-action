@@ -47,6 +47,7 @@ def write_result(package_root: str) -> None:
 
 def main() -> None:
     """The program."""
+    print("hihihihii")
     parser = build_parser()
     args = parser.parse_args()
     root_parameter = args.root_parameter
