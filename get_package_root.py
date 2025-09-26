@@ -23,12 +23,24 @@ def build_parser() -> argparse.ArgumentParser:
 
     parser.add_argument("root_parameter")
     parser.add_argument("from_git")
+    parser.add_argument("--tag", default=None)
 
     return parser
 
 
-def checkout_git_repo(git_url: str, target_dir: pathlib.Path) -> None:
-    Repo.clone_from(git_url, target_dir)
+def checkout_git_repo(git_url: str, target_dir: pathlib.Path, tag_name: str | None = None) -> None:
+    """Checkout the git repo at the given URL.
+
+    Args:
+        git_url: The girt repo URL.
+        target_dir: The directory to clone the repo to.
+        tag_name: Optional tag name.
+    """
+    repo = Repo.clone_from(git_url, target_dir)
+
+    if tag_name is not None:
+        repo.head.reference = repo.tags[tag_name].commit
+        repo.head.reset(index=True, working_tree=True)
 
 
 def write_result(package_root: str) -> None:
@@ -55,12 +67,13 @@ def main() -> None:
         repo_name = os.path.splitext(os.path.basename(parsed_url.path))[0]
 
         git_path = pathlib.Path(os.environ["RUNNER_TEMP"]) / repo_name
-        checkout_git_repo(url, git_path)
+        checkout_git_repo(url, git_path, tag_name=args.tag)
 
         write_result(git_path.as_posix())
 
     else:
         write_result(root_parameter)
+
 
 if __name__ == "__main__":
     main()

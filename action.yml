@@ -15,7 +15,7 @@ inputs:
     required: false
 
   extra:
-    description: Optional extra args to pass to build command.
+    description: Optional extra args to pass to build command
     default: ''
     required: false
 
@@ -26,6 +26,11 @@ inputs:
 
   from_git:
     description: Build the package from a git checkout
+    default: ''
+    required: false
+
+  git_tag:
+    description: Specific tag to check out when building from git
     default: ''
     required: false
 
@@ -56,14 +61,12 @@ runs:
       name: Get Package Root
       shell: bash
       run: |
-        python3 ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }}
-        cat $GITHUB_OUTPUT
+        python3 ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }} ${{ inputs.git_tag && format('--tag {0}', inputs.git_tag) || '' }}
 
     - id: determine_variant
       name: Determine variant
       shell: bash
       run: |
-        echo "Outputs were" ${{ steps.get_package_root.outputs.package_root }}
         cd ${{ steps.get_package_root.outputs.package_root }}
         rez python ${GITHUB_ACTION_PATH}/determine_variant.py ${{ inputs.variant || '""' }} ${{ inputs.variant_from_request || '""'}}
 
