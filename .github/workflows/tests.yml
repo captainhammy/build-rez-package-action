@@ -49,7 +49,7 @@ jobs:
         run: rez env dummy_rez_package -- echo "resolve successful"
 
       - name: Build a package from git
-        id: build-from-git
+        id: build-from-git-with-tag
         uses: ./
         with:
           from_git: https://github.com/captainhammy/dummy-rez-package.git
@@ -57,7 +57,7 @@ jobs:
 
       # Verify a target git package version exists
       - name: Test houdini_core_tools was built from git
-        id: successful-package-from-git
+        id: successful-package-from-git-tag
         shell: bash
         run: rez env dummy_rez_package--0.0.2 -- echo "resolve successful"
 
