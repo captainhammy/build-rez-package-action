@@ -50,7 +50,7 @@ jobs:
           rez env dummy_rez_package -- echo "resolve successful"
 
       - name: Test missing dummy_rez_package-0.0.2
-        id: no-package-from-git
+        id: no-package-from-git-with-tag
         continue-on-error: true
         shell: bash
         run: rez env dummy_rez_package-0.0.2 -- echo "resolve successful"
