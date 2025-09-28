@@ -26,7 +26,7 @@ def test_build_parser():
     (
         (None, False),
         ("1.2.3", True),
-    )
+    ),
 )
 def test_checkout_git_repo(mocker, tag, exists):
     """Test get_package_info.checkout_git_repo()."""
