@@ -48,7 +48,12 @@ jobs:
         shell: bash
         run: |
           rez env dummy_rez_package -- echo "resolve successful"
-          rm -rf ${RUNNER_TEMP}/dummy_rez_package
+
+      - name: Test missing dummy_rez_package-0.0.2
+        id: no-package-from-git
+        continue-on-error: true
+        shell: bash
+        run: rez env dummy_rez_package-0.0.2 -- echo "resolve successful"
 
       - name: Build a package from git from a specific tag
         id: build-from-git-with-tag
@@ -62,8 +67,7 @@ jobs:
         id: successful-package-from-git-tag
         shell: bash
         run: |
-          rez env dummy_rez_package--0.0.2 -- echo "resolve successful"
-          rm -rf ${RUNNER_TEMP}/dummy_rez_package
+          rez env dummy_rez_package-0.0.2 -- echo "resolve successful"
 
       # Test building a simple package with no variants.
       - name: Build test package with no variants

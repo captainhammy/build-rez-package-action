@@ -21,18 +21,29 @@ def test_build_parser():
     assert expected == ["root_parameter", "from_git", "tag"]
 
 
-@pytest.mark.parametrize("tag", (None, "1.2.3"))
-def test_checkout_git_repo(mocker, tag):
+@pytest.mark.parametrize(
+    "tag,exists",
+    (
+        (None, False),
+        ("1.2.3", True),
+    )
+)
+def test_checkout_git_repo(mocker, tag, exists):
     """Test get_package_info.checkout_git_repo()."""
+    mock_rmtree = mocker.patch("shutil.rmtree")
+
     mock_repo = mocker.MagicMock(spec=git.Repo)
     mock_clone = mocker.patch.object(get_package_root.Repo, "clone_from", return_value=mock_repo)
 
     mock_url = mocker.MagicMock(spec=str)
     mock_path = mocker.MagicMock(spec=pathlib.Path)
+    mock_path.exists.return_value = exists
 
     get_package_root.checkout_git_repo(mock_url, mock_path, tag_name=tag)
 
     mock_clone.assert_called_once_with(mock_url, mock_path)
+
+    assert mock_rmtree.call_count == int(exists)
 
     if tag is not None:
         assert mock_repo.head.reference == mock_repo.tags[tag].commit
