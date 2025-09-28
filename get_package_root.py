@@ -36,6 +36,7 @@ def checkout_git_repo(git_url: str, target_dir: pathlib.Path, tag_name: str | No
         target_dir: The directory to clone the repo to.
         tag_name: Optional tag name.
     """
+    target_dir.unlink(missing_ok=True)
     repo = Repo.clone_from(git_url, target_dir)
 
     if tag_name is not None:

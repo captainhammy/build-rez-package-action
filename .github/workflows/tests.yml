@@ -30,7 +30,7 @@ jobs:
       # Integration tests
 
       # Verify a target git package does not exist
-      - name: Test missing houdini_core_tools
+      - name: Test missing dummy_rez_package
         id: no-package-from-git
         continue-on-error: true
         shell: bash
@@ -43,14 +43,14 @@ jobs:
           from_git: https://github.com/captainhammy/dummy-rez-package.git
 
       # Verify a target git package exists
-      - name: Test houdini_core_tools was built from git
+      - name: Test dummy_rez_package was built from git
         id: successful-package-from-git
         shell: bash
         run: |
           rez env dummy_rez_package -- echo "resolve successful"
           rm -rf ${RUNNER_TEMP}/dummy_rez_package
 
-      - name: Build a package from git
+      - name: Build a package from git from a specific tag
         id: build-from-git-with-tag
         uses: ./
         with:
@@ -58,7 +58,7 @@ jobs:
           git_tag: 0.0.2
 
       # Verify a target git package version exists
-      - name: Test houdini_core_tools was built from git
+      - name: Test dummy_rez_package at a specific tag was built from git
         id: successful-package-from-git-tag
         shell: bash
         run: |
