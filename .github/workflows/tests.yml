@@ -46,7 +46,9 @@ jobs:
       - name: Test houdini_core_tools was built from git
         id: successful-package-from-git
         shell: bash
-        run: rez env dummy_rez_package -- echo "resolve successful"
+        run: |
+          rez env dummy_rez_package -- echo "resolve successful"
+          rm -rf ${RUNNER_TEMP}/dummy_rez_package
 
       - name: Build a package from git
         id: build-from-git-with-tag
@@ -59,7 +61,9 @@ jobs:
       - name: Test houdini_core_tools was built from git
         id: successful-package-from-git-tag
         shell: bash
-        run: rez env dummy_rez_package--0.0.2 -- echo "resolve successful"
+        run: |
+          rez env dummy_rez_package--0.0.2 -- echo "resolve successful"
+          rm -rf ${RUNNER_TEMP}/dummy_rez_package
 
       # Test building a simple package with no variants.
       - name: Build test package with no variants
