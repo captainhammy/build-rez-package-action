@@ -34,19 +34,32 @@ jobs:
         id: no-package-from-git
         continue-on-error: true
         shell: bash
-        run: rez env houdini_core_tools -- echo "resolve successful"
+        run: rez env dummy_rez_package -- echo "resolve successful"
 
       - name: Build a package from git
         id: build-from-git
         uses: ./
         with:
-          from_git: https://github.com/captainhammy/houdini-core-tools.git
+          from_git: https://github.com/captainhammy/dummy-rez-package.git
 
       # Verify a target git package exists
       - name: Test houdini_core_tools was built from git
         id: successful-package-from-git
         shell: bash
-        run: rez env houdini_core_tools -- echo "resolve successful"
+        run: rez env dummy_rez_package -- echo "resolve successful"
+
+      - name: Build a package from git
+        id: build-from-git
+        uses: ./
+        with:
+          from_git: https://github.com/captainhammy/dummy-rez-package.git
+          git_tag: 0.0.2
+
+      # Verify a target git package version exists
+      - name: Test houdini_core_tools was built from git
+        id: successful-package-from-git
+        shell: bash
+        run: rez env dummy_rez_package--0.0.2 -- echo "resolve successful"
 
       # Test building a simple package with no variants.
       - name: Build test package with no variants
