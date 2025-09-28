@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import os
 import pathlib
+import shutil
 from urllib.parse import urlparse
 
 # Third Party
@@ -36,7 +37,9 @@ def checkout_git_repo(git_url: str, target_dir: pathlib.Path, tag_name: str | No
         target_dir: The directory to clone the repo to.
         tag_name: Optional tag name.
     """
-    target_dir.unlink(missing_ok=True)
+    if target_dir.exists():
+        shutil.rmtree(target_dir)
+
     repo = Repo.clone_from(git_url, target_dir)
 
     if tag_name is not None:
