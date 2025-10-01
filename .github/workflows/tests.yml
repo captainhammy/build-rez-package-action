@@ -10,10 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        houdini-version:
-          - "19.5"
-          - "20.0"
-          - "20.5"
+        houdini-version: ["20.5", "21.0"]
 
     container:
       image: captainhammy/hython-runner:${{ matrix.houdini-version }}
@@ -31,6 +28,46 @@ jobs:
         run: tox
 
       # Integration tests
+
+      # Verify a target git package does not exist
+      - name: Test missing dummy_rez_package
+        id: no-package-from-git
+        continue-on-error: true
+        shell: bash
+        run: rez env dummy_rez_package -- echo "resolve successful"
+
+      - name: Build a package from git
+        id: build-from-git
+        uses: ./
+        with:
+          from_git: https://github.com/captainhammy/dummy-rez-package.git
+
+      # Verify a target git package exists
+      - name: Test dummy_rez_package was built from git
+        id: successful-package-from-git
+        shell: bash
+        run: |
+          rez env dummy_rez_package -- echo "resolve successful"
+
+      - name: Test missing dummy_rez_package-0.0.2
+        id: no-package-from-git-with-tag
+        continue-on-error: true
+        shell: bash
+        run: rez env dummy_rez_package-0.0.2 -- echo "resolve successful"
+
+      - name: Build a package from git from a specific tag
+        id: build-from-git-with-tag
+        uses: ./
+        with:
+          from_git: https://github.com/captainhammy/dummy-rez-package.git
+          git_tag: 0.0.2
+
+      # Verify a target git package version exists
+      - name: Test dummy_rez_package at a specific tag was built from git
+        id: successful-package-from-git-tag
+        shell: bash
+        run: |
+          rez env dummy_rez_package-0.0.2 -- echo "resolve successful"
 
       # Test building a simple package with no variants.
       - name: Build test package with no variants
@@ -151,3 +188,4 @@ jobs:
       - name: Validate previous step failure
         if: steps.too-many-matching-variants.outcome != 'failure'
         run: exit 1
+

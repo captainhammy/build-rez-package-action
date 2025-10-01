@@ -15,13 +15,23 @@ inputs:
     required: false
 
   extra:
-    description: Optional extra args to pass to build command.
+    description: Optional extra args to pass to build command
     default: ''
     required: false
 
   package_root:
     description: The package root directory (containing the package.py)
     default: '.'
+    required: false
+
+  from_git:
+    description: Build the package from a git checkout
+    default: ''
+    required: false
+
+  git_tag:
+    description: Specific tag to check out when building from git
+    default: ''
     required: false
 
 outputs:
@@ -42,22 +52,33 @@ runs:
   using: "composite"
 
   steps:
-    - id: determine-variant
+    - id: install_deps
+      name: Install Dependencies
+      shell: bash
+      run: python3 -m pip install -r requirements.txt
+
+    - id: get_package_root
+      name: Get Package Root
+      shell: bash
+      run: |
+        python3 ${GITHUB_ACTION_PATH}/get_package_root.py ${{ inputs.package_root }} ${{ inputs.from_git || '""' }} ${{ inputs.git_tag && format('--tag {0}', inputs.git_tag) || '' }}
+
+    - id: determine_variant
       name: Determine variant
       shell: bash
       run: |
-        cd ${{ inputs.package_root }}
+        cd ${{ steps.get_package_root.outputs.package_root }}
         rez python ${GITHUB_ACTION_PATH}/determine_variant.py ${{ inputs.variant || '""' }} ${{ inputs.variant_from_request || '""'}}
 
     - name: Build Package
       shell: bash
       run: |
-        cd ${{ inputs.package_root }}
-        rez build --install ${{ steps.determine-variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine-variant.outputs.variant_index) || '' }} ${{ inputs.extra != '' && format('{0}', inputs.extra) || '' }}
+        cd ${{ steps.get_package_root.outputs.package_root }}
+        rez build --install ${{ steps.determine_variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine_variant.outputs.variant_index) || '' }} ${{ inputs.extra != '' && format('{0}', inputs.extra) || '' }}
 
     - name: Set Outputs
       id: set_outputs
       shell: bash
       run: |
-        cd ${{ inputs.package_root }}
-        rez python ${GITHUB_ACTION_PATH}/get_package_info.py ${{ steps.determine-variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine-variant.outputs.variant_index) || '' }}
+        cd ${{ steps.get_package_root.outputs.package_root }}
+        rez python ${GITHUB_ACTION_PATH}/get_package_info.py ${{ steps.determine_variant.outputs.has_variant == 1 && format('--variant {0}', steps.determine_variant.outputs.variant_index) || '' }}

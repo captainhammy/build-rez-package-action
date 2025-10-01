@@ -26,7 +26,7 @@
 
     [tool.coverage.run]
         branch = true
-        source =  ["determine_variant", "get_package_info"]
+        source =  ["determine_variant", "get_package_info", "get_package_root"]
         omit = [
             "*version.py",
         ]
@@ -94,21 +94,11 @@
             "FURB",  # refurb
             "PYI",  # flake8-pyi
         ]
-        ignore = [
-            "D104",  # Missing docstring in public module
-            "D105",  # Missing docstring in magic method
-            "D107",  # Missing docstring in __init__
-            "PT004",  # Fixtures not returning anything not starting with _
-        ]
 
     [tool.ruff.lint.per-file-ignores]
         "tests/*.py" = [
-            "PLR0913",  # Too many args for function
-            "PLR0917",  # Too many positional args
-            "PLR6301",  # 'no-self-use' for tests
             "PT006",  # Wrong type pased as parametrize arg
             "PT007",  # Expected list instead of tuple
-            "PT008",  # Use return_value instead of lambda
         ]
 
     [tool.ruff.lint.flake8-pytest-style]
