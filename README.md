@@ -109,7 +109,6 @@ The `git_tag` input can be used to build a specific tag from that repo.
       git_tag: 0.0.2
 ```
 
-
 # Dependencies
 
 Dependencies are listed in `requirements.txt`, and the action must be run in an environment where the `rez` command is
