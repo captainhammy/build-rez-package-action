@@ -4,6 +4,8 @@
 
 This GitHub Action will build and install a [rez](https://github.com/AcademySoftwareFoundation/rez) package via the `rez build` command.
 
+The package source can exist locally, or be pulled from a git repository.
+
 # Usage
 
 ```yaml
@@ -87,6 +89,28 @@ cd ./tests/test_package
 rez build --install
 ```
 
+### from_git / git_tag
+
+The `from_git` input will build the package from a git repository rather than the package root.
+
+```yaml
+  - name: Build Package
+    uses: captainhammy/build-rez-package-action@v1
+    with:
+      from_git: https://github.com/captainhammy/dummy-rez-package.git
+```
+
+The `git_tag` input can be used to build a specific tag from that repo.
+```yaml
+  - name: Build Package
+    uses: captainhammy/build-rez-package-action@v1
+    with:
+      from_git: https://github.com/captainhammy/dummy-rez-package.git
+      git_tag: 0.0.2
+```
+
+
 # Dependencies
 
-While this package has no direct dependencies, it must be run in an environment where the `rez` command is available. 
+Dependencies are listed in `requirements.txt`, and the action must be run in an environment where the `rez` command is
+available. 
