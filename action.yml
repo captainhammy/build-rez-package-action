@@ -55,7 +55,7 @@ runs:
     - id: install_deps
       name: Install Dependencies
       shell: bash
-      run: python3 -m pip install -r requirements.txt
+      run: python3 -m pip install -r ${GITHUB_ACTION_PATH}/requirements.txt
 
     - id: get_package_root
       name: Get Package Root
