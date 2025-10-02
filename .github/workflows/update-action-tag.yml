@@ -2,7 +2,7 @@ name: Move Major Release Tag
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   movetag:
