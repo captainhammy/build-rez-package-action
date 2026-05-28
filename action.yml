@@ -55,7 +55,10 @@ runs:
     - id: install_deps
       name: Install Dependencies
       shell: bash
-      run: python3 -m pip install --group deps
+      run: |
+        # Need to cd to the action path since the pyproject.toml reading is relative to cwd.  
+        cd ${GITHUB_ACTION_PATH}
+        python3 -m pip install --group deps
 
     - id: get_package_root
       name: Get Package Root
