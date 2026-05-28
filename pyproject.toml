@@ -1,7 +1,66 @@
+[project]
+name = "build-rez-packages-action"
 
-[tool.pytest.ini_options]
-    pythonpath = "."
-    addopts = "--cov --cov-report=html --cov-report=xml --cov-fail-under=100 --color=yes"
+dependencies = [
+    "gitpython", "rez"
+]
+
+[dependency-groups]
+    deps = ["gitpython", "rez"]
+    docstrings = ["pydocstringformatter"]
+    github = ["coverage", "tox"]
+    isort = ["isort"]
+    mypy = ["mypy[toml]"]
+    ruff = ["ruff"]
+    test = ["pytest", "pytest-cov", "pytest_datadir", "pytest-mock"]
+    test_install_deps = ["markdown-pytest"]
+
+[tool.tox]
+    env_list = ["run-tests", "ruff-check", "ruff-format-check", "isort-check", "mypy", "docstring-check"]
+    labels = {test = ["run-tests"], static = ["ruff-check", "ruff-format-check", "isort-check", "mypy", "docstring-check"], fix = ["ruff-format-fix", "isort-run", "docstring-run"] }
+    no_package = true
+
+    [tool.tox.env.run-tests]
+        allowlist_externals = ["echo"]
+        dependency_groups = ["deps", "test"]
+        set_env = {PYTHONPATH = "{toxinidir}:{envsitepackagesdir}"}
+        commands = [["pytest", "tests/python"]]
+        commands_post = [["echo", "View test coverage report at file://{toxinidir}/coverage_html_report/index.html"]]
+
+    [tool.tox.env.ruff-check]
+        dependency_groups = ["ruff"]
+        commands = [[ "ruff", "check", "--preview", "determine_variant.py", "get_package_info.py", "get_package_info.py", "tests/python"]]
+
+    [tool.tox.env.ruff-format-check]
+        dependency_groups = ["ruff"]
+        commands = [[ "ruff", "format", "--preview", "--check", "--diff",  "determine_variant.py", "get_package_info.py", "get_package_info.py", "tests/python"]]
+
+    [tool.tox.env.ruff-format-fix]
+        dependency_groups = ["ruff"]
+        commands = [[ "ruff", "format", "--preview",  "determine_variant.py", "get_package_info.py", "get_package_info.py", "tests/python"]]
+
+    [tool.tox.env.isort-check]
+        dependency_groups = ["isort"]
+        commands = [[ "isort", "--check",  "determine_variant.py", "get_package_info.py", "get_package_info.py", "tests/python"]]
+
+    [tool.tox.env.isort-run]
+        dependency_groups = ["isort"]
+        commands = [[ "isort",  "determine_variant.py", "get_package_info.py", "get_package_info.py", "tests/python"]]
+
+    [tool.tox.env.mypy]
+        dependency_groups = ["deps", "mypy"]
+        commands = [[ "mypy"]]
+
+    [tool.tox.env.docstring-check]
+        dependency_groups = ["docstrings"]
+        commands = [[ "pydocstringformatter", "--exit-code", "determine_variant.py", "get_package_info.py", "get_package_info.py"]]
+
+    [tool.tox.env.docstring-run]
+        dependency_groups = ["docstrings"]
+        commands = [[ "pydocstringformatter", "--write", "determine_variant.py", "get_package_info.py", "get_package_info.py"]]
+
+[tool.pytest]
+    addopts = ["--cov", "--cov-report=html", "--cov-report=xml", "--cov-fail-under=100", "--color=yes"]
 
 [tool.isort]
     profile = "black"
@@ -27,9 +86,6 @@
     [tool.coverage.run]
         branch = true
         source =  ["determine_variant", "get_package_info", "get_package_root"]
-        omit = [
-            "*version.py",
-        ]
         disable_warnings = [
             "module-not-imported",
             "module-not-measured",
@@ -39,18 +95,8 @@
         exclude_lines = [
             # Have to re-enable the standard pragma
             "pragma: no cover",
-
-            # Don't complain about missing debug-only code:
             "def __repr__",
-            "if self.debug",
             "if TYPE_CHECKING",
-
-            # Don't complain if tests don't hit defensive assertion code:
-            "raise AssertionError",
-            "raise NotImplementedError",
-
-            # Don't complain if non-runnable code isn't run:
-            "if 0:",
             "if __name__ == .__main__.:",
         ]
         ignore_errors = true

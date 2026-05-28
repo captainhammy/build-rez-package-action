@@ -111,5 +111,4 @@ The `git_tag` input can be used to build a specific tag from that repo.
 
 # Dependencies
 
-Dependencies are listed in `requirements.txt`, and the action must be run in an environment where the `rez` command is
-available. 
+This package must be run in an environment where the `rez` and `git` commands are available.
