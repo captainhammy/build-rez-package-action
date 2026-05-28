@@ -1,5 +1,5 @@
 [project]
-name = "build_rez_packages_action"
+name = "build-rez-packages-action"
 
 dependencies = [
     "gitpython", "rez"
